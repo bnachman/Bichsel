@@ -1,0 +1,14 @@
+Common block COV.CMM  for convolution programs, Easter 1986.
+        common /barray/ f(1405),h(1405),E(1705),DI(1705),dE(1705),xn
+        common /ut/   N1,NU,F0,H0,U,um,EX,CZ0,CN,CM0,CM1,CM2,CM3,CM4
+        common /IND/  N2,N2P,MIE,MIF,MIH,LEF,LEH,D1,nume,lemx
+        common /ABS/  Aw,atnu,dEdx,exth,pi,rho,thi,Za,xi,rkap,Ry
+        common /NML/  saxk,Etop,bemx,FSG,zi,su(8),nels(2)
+        common /MEAN/ CMA,CMB,CMD,D2,D3,D4,tdedx,tDD(2,4),xkmn(200)
+        common /SPTT/ sig(6,1252),stp(5),tsig(5),rM2(5),rim(1252)
+        common /EP12/ ep(2,1252),dfdE(1252),BB(2)
+        common /ENER/ Emin,Efin,Emax,gam,pkE
+        common /const/ners,dec
+        common /EVA/  npm,nzch,ptM,bg,betasq
+C
+        common/BDUMP/ LEVDMP   

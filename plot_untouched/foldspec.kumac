@@ -1,0 +1,56 @@
+*
+*  L  E ADC  H  ASP, ASS 
+*
+vec/cre Ldat(200) i
+vec/cre Eev(200) r
+vec/cre adc(200) r
+vec/cre Hdat(200) r
+vec/cre asp(200) r
+vec/cre ass(200) r
+vec/cre dum(200) r 
+vec/cre Ekev(200) r
+vec/cre Hscale(200) r 
+
+vec/read Ldat,Eev,adc,Hdat,asp,ass foldspec_muon_1000mev_228micron.dat
+
+sigma Ekev = 0.001*Eev
+sigma Hscale = 1.E6*Hdat
+
+opt *
+set ygti 1.0
+title 'dE/dx spectrum'
+null 0 115 0 40 
+atitle 'Energy loss (KeV)' ' '
+hp/er Ekev Hscale dum dum 49 21 0.20 1
+
+vec/read Ldat,Eev,adc,Hdat,asp,ass foldspec_muon_1000mev_300micron.dat
+
+sigma Ekev = 0.001*Eev
+sigma Hscale = 1.E6*Hdat
+
+set pmci 2
+hp/er Ekev Hscale dum dum 34 24 0.20 1
+
+vec/read Ldat,Eev,adc,Hdat,asp,ass foldspec_muon_1000mev_400micron.dat
+
+sigma Ekev = 0.001*Eev
+sigma Hscale = 1.E6*Hdat
+
+set pmci 4
+hp/er Ekev Hscale dum dum 18 23 0.20 1
+
+set csiz 0.4
+set chhe 0.5
+itx 10 37 '1 GeV Muon'
+set pmci 1 
+set txci 1 
+key 10 34 21 '228 micron Si'   
+set pmci 2 
+set txci 2 
+key 10 32 24 '300 micron Si'   
+set pmci 4 
+set txci 4 
+key 10 30 23 '400 micron Si'   
+
+set pmci 1
+set txci 1

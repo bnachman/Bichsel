@@ -1,0 +1,92 @@
+igset *
+opt *
+set *
+hi/de *
+pic/de *
+zone
+opt nbox
+*opt date
+
+igset txfp 0 3
+set ysiz 13.
+set xsiz 15.
+set gsiz .7
+set asiz .45
+set csiz 1.0
+set vsiz .35
+set tsiz .40
+set ksiz 0.2
+set ygti .3
+set ylab 1.0
+set xlab 1.9
+set xmgl 2.5
+set xmgr 1.5
+set lwid 2
+set bwid 3
+
+SET CFON -60
+SET LFON -60
+SET TFON -60
+SET VFON -60
+SET GFON -60 
+
+opt liny
+opt zfl
+
+igset txfp -60 
+
+ve/de *
+
+ve/cr bin(80)
+ve/cr x(80)
+ve/cr hdval3(80)
+ve/cr hderr3(80)
+ve/cr hmval3(80)
+ve/cr hmerr3(80)
+ve/cr hdval7(80)
+ve/cr hderr7(80)
+ve/cr hmval7(80)
+ve/cr hmerr7(80)
+
+title_gl ' '
+ 
+ve/re bin,x,hdval,hderr 'phcheck3_cth1.dat' 
+ve/re bin,x,hmval,hmerr 'santacruz8.dat' 
+
+vscale hdval  0.3092 hdval
+vscale hderr  0.3092 hderr
+
+1d 311 '' 80 0. 160.
+1d 312 '' 80 0. 160.
+ 
+hi/put/c 311 hdval
+hi/put/e 311 hderr 
+hi/put/c 312 hmval 
+hi/put/e 312 hmerr  
+
+set hcol 4 
+hi/pl 311 hist 
+set hcol 2
+set errx -1 
+hi/pl 312 s,hist
+
+set txal 13 
+set txfp -100
+set chhe 0.35
+
+set txci 4
+itx 65 3000. 'SLD VXD3 Data'
+set txci 2
+itx 65 2800. 'CCD simulation'
+set txci 1  
+itx 80 1800. '1 GeV pions'
+itx 80 1550. '"B#cos[q]"BL#0.1'
+atitle 'Cluster Pulse Height (ADC)' ''
+ 
+
+
+
+
+
+
+

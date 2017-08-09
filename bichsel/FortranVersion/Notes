@@ -1,0 +1,3 @@
+covlib.for
+
+L233: should be Emin = 1839. / 2**(1.*ken/N2), otherwise, the answer can be wrong.

@@ -1,0 +1,192 @@
+*
+* Single collision spectrum plots:
+*  #sig       total cross section and components
+*  #betgam    variation vs beta*gamma
+*  #integral  cross section and Eloss integral for a few different momenta 
+*
+* ptype = 1  proton 
+*       = 2  pion 
+*       = 3  alpha 
+*       = 4  electron 
+*       = 5  kaon
+*       = 6  muon
+* pmom  = mometum in GeV 
+* (Must not type more than 3 decimals to avoid kumac turning integer to 
+*  real number for sigplot argument. 4.123 is OK;  5.1234 is NOT OK)       
+*
+macro sig ptype=2 pmom=5. 
+hi/del * 
+set lwid 4
+opt logx 
+opt logy  
+set ygti 1.5
+set asiz 0.5
+set vsiz 0.5
+set gsiz 0.8
+set ylab 1.5
+set xmgl 3.0
+set xlab 2.0
+set xval 0.8
+set yval 0.4
+title 'Collision Cross Section Spectrum' 
+null 10. 100000. 10000. 2000000.
+atitle 'Energy Loss (eV)' 'N?a!E^2![s](E) (eV^2!/cm)'  
+pmev = 1000.*[pmom]
+mess Track momentum in MeV = [pmev]
+call sigplot.f([ptype],[pmev],1,0)
+fun/pl covsig 10. 100000. SL 
+call sigplot([ptype],[pmev],2,0)
+set dmod 2
+set plci 2
+fun/pl covsig 10. 100000. SL 
+call sigplot([ptype],[pmev],3,0)
+set dmod 3
+set plci 3
+fun/pl covsig 10. 100000. SL 
+call sigplot([ptype],[pmev],4,0)
+set dmod 4
+set plci 4
+fun/pl covsig 10. 100000. SL  
+set dmod 1 
+set plci 1
+
+return
+
+*
+* beta/gamme dependence  
+*
+macro betgam ptype=2 
+hi/del * 
+set lwid 4
+opt logx 
+opt liny  
+set ygti 1.5
+set asiz 0.5
+set vsiz 0.5
+set ksiz 0.5
+set csiz 0.5
+set gsiz 0.8
+set ylab 1.5
+set xmgl 4.0
+set xlab 3.0
+set xval 0.8
+set yval 0.4
+title 'Collision Cross Section Spectrum' 
+null 10. 100000. 0. 1600000.
+atitle 'Energy Loss (eV)' 'N?a!E^2![s](E) (eV^2!/cm)'  
+
+call sigplot.f([ptype],100000,1,0)
+set plci 1 
+set dmod 1 
+fun/pl covsig 10. 100000. SL
+key 500 1340000. 1 '100 GeV/c' ! L   
+call sigplot([ptype],5000,1,0)  
+set dmod 2
+set plci 2
+fun/pl covsig 10. 100000. SL 
+key 500 1260000. 2 '5 GeV/c' ! L    
+call sigplot([ptype],500,1,0)
+set dmod 3
+set plci 1
+fun/pl covsig 10. 100000. SL
+key 500 1180000. 3 '500 MeV/c' ! L   
+call sigplot([ptype],50,1,0)
+set dmod 4
+set plci 4
+fun/pl covsig 10. 100000. SL
+key 500 1100000. 4 '50 MeV/c'  ! L   
+set dmod 1 
+set plci 1
+
+return
+
+*
+* Cross section integral  
+*
+macro integral ptype=2
+hi/del * 
+set txfp 40
+set gfon 40
+set vfon 40
+set tfon 40
+set lfon 40
+set cfon 40
+set lwid 4
+opt logx 
+opt liny  
+set ygti 1.5
+set asiz 0.45
+set vsiz 0.5
+set ksiz 0.45
+set csiz 0.5
+set gsiz 0.8
+set ylab 1.2
+set xmgl 4.0
+set xlab 3.0
+set xval 0.8
+set yval 0.4
+zone 1 2 
+
+title 'Cross Section and Energy Loss Integrals'
+
+opt=6
+Emax=1E5
+Ymax=60000 
+null 10. [Emax] 0. [Ymax]
+
+call sigplot.f([ptype],100000,[opt],0)
+set plci 1 
+set dmod 1 
+fun/pl covsig 10. [Emax] SL
+atitle 'Energy Loss (eV)' 'No. of Collisions/cm'  
+
+key 500 0.4*[Ymax] 1 '100 GeV/c' ! L   
+call sigplot([ptype],5000,[opt],0)  
+set dmod 2
+set plci 2
+fun/pl covsig 10. [Emax] SL 
+key 500 0.32*[Ymax] 2 '5 GeV/c' ! L    
+call sigplot([ptype],1000,[opt],0)
+set dmod 3
+set plci 3
+fun/pl covsig 10. [Emax] SL
+key 500 0.24*[Ymax] 3 '1 GeV/c' ! L   
+call sigplot([ptype],200,[opt],0)
+set dmod 4
+set plci 4
+fun/pl covsig 10. [Emax] SL
+key 500 0.16*[Ymax] 4 '200 MeV/c'  ! L   
+set dmod 1 
+set plci 1
+
+opt = 7
+Emax=1E5
+Ymax=5  
+null 10. [Emax] 0. [Ymax]
+
+call sigplot.f([ptype],100000,[opt],0)
+set plci 1 
+set dmod 1 
+fun/pl covsig 10. [Emax] SL
+atitle 'Energy Loss (eV)' 'Restricted Eloss (MeV/cm)'  
+
+key 30 0.9*[Ymax] 1 '100 GeV/c' ! L   
+call sigplot([ptype],5000,[opt],0)  
+set dmod 2
+set plci 2
+fun/pl covsig 10. [Emax] SL 
+key 30 0.82*[Ymax] 2 '5 GeV/c' ! L    
+call sigplot([ptype],1000,[opt],0)
+set dmod 3
+set plci 3
+fun/pl covsig 10. [Emax] SL
+key 30 0.74*[Ymax] 3 '1 GeV/c' ! L   
+call sigplot([ptype],200,[opt],0)
+set dmod 4
+set plci 4
+fun/pl covsig 10. [Emax] SL
+key 30 0.66*[Ymax] 4 '200 MeV/c'  ! L   
+set dmod 1 
+set plci 1
+
+return

@@ -1,0 +1,18 @@
+
+*set lfon 21
+*set vfon 21
+set tfon -40
+set txfp -40 
+set ysiz 25.
+set xsiz 23.
+set xmgl 2.8 
+set xmgr 2
+set ymgu 3
+set ymgl 3 
+set gfon -40 
+set gsiz 1.0
+set ygti 0.8
+set tsiz 0.5 
+set vsiz 0.4
+set asiz 0.4
+set chhe 0.4

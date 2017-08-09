@@ -1,0 +1,7 @@
+OPTION STA
+OPTION ZFL1
+HOST_PAGER 'more'
+igset mtyp 20
+set errx .0001
+opt nbox
+exec plini

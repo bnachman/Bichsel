@@ -1,0 +1,83 @@
+
+Instructions for Han Bichsel's COV/FOLD programs
+================================================
+     
+                    Su Dong
+             Last Update: Apr/13/2016 
+
+This package contains the silicon ionizaion simulation using the Bichsel code.
+The details of the Bichsel ionization calculations for silicon are described
+in the paper: For the original paper (Rev. Mod. Phys. 60, p663, 1988):
+  http://prola.aps.org/abstract/RMP/v60/i3/p663_1
+For all applications using the content of this program, please reference to
+the RMP paper above and COV/FOLD program with private communication to Hans
+Bichsel. The are other related information on Hans' web page:
+  http://faculty.washington.edu/hbichsel/
+you may be interested in. 
+
+These packages are in FORTRAN! developed in te 80's on Windows as standalone 
+programs. This distribution wrapped the package for more convenient interface
+to other applications on UNIX and with a few plotting examples added. The 
+package distribution is currently at: 
+  http://www.slac.stanford.edu/~sudong/silicon/bichsel_covfold.tar
+which you can download and unpack on a UNIX machine with command  
+  tar -xvf bichsel_covfold.tar 
+to a subdirectory called bichsel_covfold/
+
+The package contains two directories:
+ bichsel/  this is mostly the original code from Hans Bichsel for generating 
+           the single collision cross sections and folding dE/dx spectra.
+           The executables were built on SLAC Linux RHEL3.   
+ plot/     this contains a set of application programs plotting the collsion
+           cross section and ionzation spectra. The plotting is implemented
+           to use PAW kumac which runs the Hans Bichsel program within it. 
+Note that for the tar version, the soft links in these directories may be 
+broken so that upon unpacking the tar files, you may to establish the 
+following soft links: 
+in bichsel/
+     ln -s /. bichinc
+in plot/
+     ln -s ../bichsel bichinc
+     ln -s ../bichsel bichdat
+These to are make sure the execution of compiling will be able to find
+the bichinc,bichdat directories used in the code.   
+
+Plotting utilities: 
+------------------- 
+
+There is a set of plotting examples I added to the package which can be run
+on a UNIX machine. Many of the plotting utilities were done a long time ago 
+which needs PAW installed (sorry, this was done in the 90's and
+still compatible with the COV/FOLD fortran code...): 
+
+cd bichsel_covfold/plot
+paw     
+>paw exec sigplot#sig    (this generates the single atomic collision E loss
+                          spectrum like Fig.9 in the Bichsel paper).
+
+>paw exec sigplot#integral (this generates the integral plots of single atomic 
+                          collision cross section and E loss spectrum for a 
+                          few different momenta) 
+
+>paw exec sigplot#betgam (This shows the effect of changing particle momentum
+                          on the ionizatoin spectrum) 
+  
+>paw exec foldspec  (This has the dE/dx spectrum for a few different 
+                     thickness of silicon. The max E-loss range is 
+                     unfortunately not high enough for ~300micron sillicon
+                     for this version of the code). 
+>paw exec phplot    (Real ionization pulse height plot compared to data)
+   
+>paw call foldtest.for  (this will produce a E loss spectrum file 
+                         foldspec_*.dat based on your chosen option) 
+
+There are also a few more modern ROOT macro plotting examples using foldtest 
+results already stored:
+root
+root> .x foldspec.C   (Engergy loss spectra for a list of thin silicon thicknesses
+                       and zoomed threshold ineffeciny effect: result of this 
+                       is bichsel-spectra.png)
+root> .x dEdX.C       (Engergy loss spectra per unit length for different silicon 
+                       thicknesses to illustrate "dE/dX" is not a scalable concept.  
+                       Result of this is dEdX.png)
+        

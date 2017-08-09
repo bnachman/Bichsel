@@ -1,0 +1,7 @@
+*** Begin of history file: Fri Jan 27 22:24:18 2006
+exec sigplot.kumac
+exec sigplot.kumac#sig
+exec sigplot.kumac#betgam
+exec phplot
+quit
+*** End   of history file: Fri Jan 27 22:25:51 2006
