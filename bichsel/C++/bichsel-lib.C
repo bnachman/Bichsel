@@ -127,23 +127,23 @@ void EMRED() {
 // values read from file go into global arrays sig and xkmn. etbl is thrown away. 
 
 std::ifstream unit16;
-int n2t=0,numt=0,jt=0;
+int n2t=0,numt=0,jt=0,j;
 float etbl;
 std::string line;
 
 unit16.open("bichdat/emerc.tab");
-
 std::cout << "EMRED" << std::endl;
-std::getline(unit16, line);
-std::getline(unit16, line);
-std::getline(unit16, line);
-std::getline(unit16, line);
+for (j=0;j<4;j++){ 
+   std::getline(unit16, line);
+   std::cout << line << std:endl;
+} 
 
-for (int j=1; j<=175; j++) {
+for (j=1; j<=175; j++) {
     std::getline(unit16, line);
     std::istringstream iss(line);
     iss >> jt >> etbl >> sig[6][j] >> xkmn[j];
-    if (j<10) std::cout << jt << " " << etbl << " " <<  sig[6][j] << " " <<  xkmn[j] << std::endl;
+    if (jt>=20 && jt<=31) std::cout <<j <<" " <<jt <<" " <<E[j] <<" " <<sig[6][j] <<" " <<xkmn[j] << std::endl;
+//       format (' EM:',2i4,2f11.2,2f12.6)
 }
 unit16.close();
 return;
