@@ -17,7 +17,7 @@ const int NCOL=112;
 //****************************************************************************************
 // Global Variables: were mydeclared by Bichsel in a fortran common block
 // Bichsel used implicit typing: names starting with i,j,k,l,m,n are integer; others real. 
-// NOte that all array indices run fomr 1 to max and are dimensioned as [max+1]. 0 index not used. 
+// Note that all array indices run from 1 to max and are dimensioned as [max+1]. 0 index not used. 
 //****************************************************************************************
 //variables from common /barray/ 
 float f[1405+1],h[1405+1],E[1705+1],DI[1705+1],dE[1705+1],xn;
@@ -127,24 +127,25 @@ void EMRED() {
 // values read from file go into global arrays sig and xkmn. etbl is thrown away. 
 
 std::ifstream unit16;
-int n2t=0,numt=0,jt=0;
+int n2t=0,numt=0,jt=0,j;
 float etbl;
 std::string line;
 
 unit16.open("bichdat/emerc.tab");
-
 std::cout << "EMRED" << std::endl;
-std::getline(unit16, line);
-std::getline(unit16, line);
-std::getline(unit16, line);
-std::getline(unit16, line);
+for (j=0;j<4;j++){ 
+   std::getline(unit16, line);
+   std::cout << line << std::endl;
+} 
 
-for (int j=1; j<=175; j++) {
+for (j=1; j<=175; j++) {
     std::getline(unit16, line);
     std::istringstream iss(line);
     iss >> jt >> etbl >> sig[6][j] >> xkmn[j];
-    if (j<10) std::cout << jt << " " << etbl << " " <<  sig[6][j] << " " <<  xkmn[j] << std::endl;
+    if (jt>=20 && jt<=31) std::cout <<j <<" " <<jt <<" " <<E[j] <<" " <<sig[6][j] <<" " <<xkmn[j] << std::endl;
+//       format (' EM:',2i4,2f11.2,2f12.6)
 }
+
 unit16.close();
 return;
 }
@@ -495,8 +496,9 @@ outfile << std::endl << "     SPECT F.307:  beta^2=" << betasq << "     atoms pe
 
 std::cout << "  uef= " << uef << std::endl;
 // formats 5F12.4/2(28x,5f12.3/) 
-outfile << "         Integ. over sig =" << tsig << std::endl; 
-outfile << "                            ";
+outfile << "         Integ. over sig =" ; 
+for (L=1; L<6; L++) outfile << " " << tsig[L]; 
+outfile << std::endl << "                            ";
 for (L=1;L<=5;L++) outfile << stp[L] << " ";   
 outfile << std::endl << "                            ";
 for (L=1;L<=5;L++) outfile << rM2[L] << " ";
@@ -792,22 +794,20 @@ void OUTPUT(std::ofstream& outfile1, std::ofstream& outfile2) {
         X = 1.;
         N = MIH - MIE;
 
+      outfile2 << "******************* N1= "<<N1<<" NU,ners= "<<NU<<", "<<ners<<" ***************" << std::endl; 
       if (N1 > NU-ners) {
 
            outfile2 <<LEH<<", "<<N1<<", "<<N2<<", "<<N2P<<", "<<N;
            outfile2 <<", "<<H0<<", "<<thi<<", "<<xi<<", "<<rkap<<std::endl;
-
-                if (N2 != N2P) {
-  
-                   outfile2 << lemx << std::endl;
-                   for (k=1;k<=lemx;k++) {
+           outfile2 << lemx << std::endl;
+           
+	   for (k=1;k<=lemx;k++) {
                       outfile2 << E[k]; //  format (8f10.3) 
                       if ((k+1)%8) outfile2 << ", ";
-                      else outfile2 << std::endl;
-                   } 
-                   outfile2 << std::endl;
-                   N2P = N2;
-                } // if N2 != N2P 
+                      else outfile2 << "  |" << std::endl;
+                  }
+           	 outfile2 << std::endl;
+           if (N2 != N2P) N2P = N2;
 
         ASP[1] = 0;
         ASS[1] = 0;
@@ -891,13 +891,13 @@ float xmc,xx,S, STPP, DK, DQ, dmmpl, PB;
    outfile1.open("COV.OPA", std::ios_base::app); 
    outfile2.open("COV.SPE", std::ios_base::app);
 
-   outfile1 << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+   outfile1 << "*** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
    outfile1 << "   CONV   t=" << exth << "   FSG=" << FSG << std::endl;
 
    xmc = exth * FSG;
 //number of collisions in thickness exth
    JXT = (int)(log(xmc)/log(2.0)) + 1;
-   std::cout << "  JXT=" << JXT;
+   std::cout << "  JXT=" << JXT << " xmc= " << xmc << std::endl;
    xx = xmc / pow(2.0,JXT);
    CZ0 = xx / 1024.;
    NU  = JXT + 10 + 1;
@@ -961,7 +961,7 @@ float xmc,xx,S, STPP, DK, DQ, dmmpl, PB;
            rkap = 2. * rkap;
            CN   = 2. * CN;
 
-    outfile1 << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+    outfile1 << "* *** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
     outfile1 << " CONVOL NUMBER= "<<N1<<" LEH= "<<LEH<<"  MIE, MIH= "<<MIE<<", "<<MIH;
     outfile1 << "    mean collision number= "<< CN << "   CZ0= "<< CZ0 << std::endl; 
 //    format (/,' CONVOL NUMBER=',i3,' leh=',i4,2x,'MIE,MIH=',
