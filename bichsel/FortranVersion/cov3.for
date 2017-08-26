@@ -2,7 +2,7 @@ C   COV3.FOR;             Convolution subroutines
  
         subroutine CONV
         include 'cov.cmm'
- 
+
                 write (3,303)
  303            format (/1x,50(' *'))
                 write (3,*) '  CONV','  t=',exth,'  fsg=',fsg
@@ -181,7 +181,7 @@ c408            format (' CONV, F.408',2i5,f9.3,1p4e11.4/)
         subroutine FOLD
 C On 18 July 1984, I have some questions whether ST 62 is correct
         include 'cov.cmm'
- 
+
         do 60 L=1,1250
         F(L) = H(L)
  60     H(L) = 0.
@@ -211,7 +211,8 @@ C On 18 July 1984, I have some questions whether ST 62 is correct
  63     H(L) = H(L) * 2.0
         if (F0 .gt. EX) call ZERO
  65     call SHRINK
-        call NORMAL
+        call NORMAL      
+
         RETURN
         END
  

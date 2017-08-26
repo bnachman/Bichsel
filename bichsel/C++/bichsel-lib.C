@@ -38,19 +38,20 @@ float CMA,CMB,CMD,D2,D3,D4,tdedx,tDD[2+1][4+1],xkmn[200+1];
 //variables from common /SPTT/ 
 float sig[6+1][1252+1],stp[5+1],tsig[5+1],rM2[5+1],rim[1252+1]; 
 //variables from common /EP12/ 
-float ep[2][1252+1],dfdE[1252+1],BB[2+1];
+float ep[3][1252+1],dfdE[1252+1],BB[2+1];
 //variables from common /ENER/ 
 float Emin,Efin,Emax,gam,pkE;
 //variables from common /const/
-int ners;
-//variables from common /EVA/  
+int ners=1;
+//variables from common /EVA/  3
 int npm,nzch;
 float PTM,bg,betasq=1.;
 //variables from common/BDUMP/ 
 int LEVDMP;   
 
 //Other constants not in common block- I collected them here
-const float  elm =  0.511004; //electron masss
+//const float  elm =  0.511004; //electron masss
+const float elm = 511004.; //eV.
 
 float mydec = 1;
 
@@ -207,17 +208,18 @@ else {
 
 // Maximum energy transfer   Emax  (MeV) 
 // Uehling, also Sternheimer & Peierls Eq.(53)
-    Emax = PTM * (gam*gam - 1) / (PTM/(2.*elm) + (2.*elm)/PTM + gam);
+   double telm = 2 * 0.511004;
+    Emax = PTM * (gam*gam - 1) / (PTM/telm + telm/PTM + gam);
 
 // cannot distinguish i/o electrons
     if (npm==4) Emax = pkE / 2.;
         
     std::cout << "particle type = " << npm << "   Emax = " << Emax << " MeV" << std::endl;
-    Emx  = (2.*elm) * bg*bg;
+    Emx  = telm * bg*bg;
 
 // write to output file. Need to properly pad the numbers as
 // f11.4, f13.4, and f15.4
-outfile << std::endl << "   beta*gamma=" << bg << "   momentum=" << pmom << "   E kinetic of incident particle=" << pkE;
+outfile << std::endl << "   beta*gamma=" << bg << "   momentum=" << pmom << "   E kinetic of incident particle=" << pkE << " MeV " << std::endl;
 // write to output file. Need to properly pad the numbers as
 // f9.6, f12.5, e12.4, e12.4
 outfile << "   beta^2=" << betasq << "   gamma=" << gam << "   Emax=" << Emax << " " << Emx << " MeV" << std::endl;
@@ -247,7 +249,8 @@ float Emk=0.;
 std::ofstream outfile;
 outfile.open("COV.OPA", std::ios_base::app); 
 
-std::cout << "PREP: Ry = " << Ry << " eV" << std::endl;
+outfile << std::endl;
+outfile << "PREP: Ry = " << Ry << " eV" << std::endl;
 std::cout << "Enter particle type (1=P, 2=Pi, 3=Alpha, 4=e, 5=K) :";
 std::cin >> npm;
 std::cout << "Enter silicon thickness in microns :";
@@ -271,7 +274,7 @@ std::cin >> exth;
         atnu = 6.0222e23 * rho / AW;
 
 // write to output file
-outfile << "PREP: particle mass= " << PTM << "MeV, charge=" << zi; 
+outfile << "PREP: particle mass= " << PTM << "MeV, charge=" << zi << std::endl;
 
 // Initialization kinematic parameters
         EVANS();
@@ -281,7 +284,7 @@ outfile << "PREP: particle mass= " << PTM << "MeV, charge=" << zi;
         Emk  = saxk * Emax;
 
 // write to output file
-outfile << ", Z=" << ZA << ", A=" << AW << ", t=" << exth << "cm, K/Z=" << saxk << ", k*Emax/Z=" << Emk << std::endl;
+outfile << "Z=" << ZA << ", A=" << AW << ", t=" << exth << "cm, K/Z=" << saxk << ", k*Emax/Z=" << Emk << std::endl;
 
 outfile.close();
 return;
@@ -290,7 +293,7 @@ return;
 //*********************************************************************************************
 
 void PREPE() {
-float etbl=0.0, u, ken, exs;
+float etbl=0.0, ken, exs;
 
 // open ouptut file in append mode
 std::ofstream outfile;
@@ -301,9 +304,9 @@ outfile.open("COV.OPA", std::ios_base::app);
         N2   = 64.;
         nume = 650;
         if (N2 == 64) nume = 1250;
-        u    = log(2.) / N2; //check if log is log or ln
-        um   = exp(u);
-        ken  = log(1839. / 1.5) / u;
+        U    = log(2.) / N2; //check if log is log or ln
+        um   = exp(U);
+        ken  = log(1839. / 1.5) / U;
         Emin = 1839. / pow(2.,(ken/N2)); 
         //Emin = 1839/2; 
         E[1] = Emin; 
@@ -313,14 +316,14 @@ std::cout <<" PREPE " << N2 << ", " << ken << ", " << E[1] << ", " << Emin << st
 
 // write to output file. Need to properly pad the numbers as
 // I4, f8.3, f9.6, f10.6
-outfile << std::endl << " PREPE:   N2=" << N2 << "      Emin=" << Emin << "   u=" << u << " e^u=" << um << std::endl;
+outfile << std::endl << " PREPE:   N2=" << N2 << "      Emin=" << Emin << "   u=" << U << " e^u=" << um << std::endl;
 
         lemx = nume + 450;
         for (int L=1; L<=lemx; L++) {
           exs = exs * um;
           E[L+1] = E[L] * um;
           if ( (L/50)*50 == L) std::cout << " L,E=" << L << ", " << E[L] << ", " << exs << ", " << um << std::endl;
-          DI[L]  = -log(1.0 - 1.0/exs) / u;
+          DI[L]  = -log(1.0 - 1.0/exs) / U;
           dE[L]  = E[L+1] - E[L];
           if (L <= nume) h[L]   = 0.;
           if (E[L] <= Emax) LEH = L;
@@ -342,7 +345,7 @@ return;
 //*********************************************************************************************
 
 void HPART(float bbb, float fft, float sbb, float STPW, float SECM, std::ofstream& outfile) {
-float rst, tdedx, secmv, rM2p, del2, TE;
+float rst, secmv, rM2p, del2, TE;
 
         if (npm < 4) rst = bbb * log (Emax/Efin) + sbb * (1./Efin - 1./Emax) - betasq*(1. - Efin/Emax);
 
@@ -362,7 +365,7 @@ float rst, tdedx, secmv, rM2p, del2, TE;
 
         }
 
-std::cout << " residual dE/dx=" << rst << " " << rst*fft << " MeV/cm" << std::endl;
+outfile << " residual dE/dx=" << rst << " " << rst*fft << " MeV/cm" << std::endl;
  
         tdedx = STPW/1.e6 + rst*fft;
 
@@ -375,6 +378,7 @@ std::cout <<  " dE/dx=" << tdedx << " " << tdedx/rho << std::endl;
 
 std::cout <<  " M2=" << secmv << "  M2''=" << fft*rM2p << " M2-M2''=" << del2 << std::endl;
 outfile <<  " M2=" << secmv << "  M2''=" << fft*rM2p << " M2-M2''=" << del2 << std::endl;
+outfile << std::endl;
 
 return;
 }
@@ -402,10 +406,16 @@ int j, nlast, jpr = 20, ja  = 20;
 outfile << std::endl << " SPTS: nlast   " << nlast << " total cross section=" << SGM << "   dE/dx=" << STPW << ", M2=" << SECM << std::endl;
 outfile << "  see FSR-99 and CCS-9" << std::endl;
 
+outfile << std::endl;
+
 outfile << " final E=" << Efin << ", Emax=" << Emax << ", he2=" << he2 << std::endl;
+
+    std::cout << "bbb " << mydec << std::endl;
 
         bbb = 1. - sbb*betasq / Emax;
         fft = 14. * mydec / 1e6;
+
+         std::cout << "bbb " << fft << std::endl;
 
 outfile << " sbb" << sbb << " eV,   bbb=" << bbb << "   fft=" << fft << std::endl;
 
@@ -434,6 +444,7 @@ outfile.open("COV.OPA", std::ios_base::app);
 
      fac = 8. * pi * Ry*Ry * (0.529177e-8)*(0.529177e-8) / (elm * betasq);
      mydec = zi*zi * atnu * fac;
+     std::cout << "hola " << Ry << " " << elm << " " << betasq << " " << fac << " " << atnu << " " << zi << std::endl;
      blg = log ((2.*elm) * bg*bg) - betasq; 
 
 //format f12.10, e12.4, f9.4
@@ -484,7 +495,7 @@ outfile << std::endl << "     SPECT F.307:  beta^2=" << betasq << "     atoms pe
           sig[2][j] = 0; sig[5][j] = 0;
           for (L=1;L<=4;L++) {
                 tsig[L]  = tsig[L]  + sig[L][j] * dE[j] / (E[j]*E[j]);
-                stp[L]   = stp[L]   + sig[L][j] * dE[j] / (E[j]*E[j]);
+                stp[L]   = stp[L]   + sig[L][j] * dE[j] / E[j];
                 rM2[L]   = rM2[L]   + sig[L][j] *  dE[j];
                 sig[5][j] = sig[5][j] + sig[L][j];
           }
@@ -494,7 +505,9 @@ outfile << std::endl << "     SPECT F.307:  beta^2=" << betasq << "     atoms pe
 
      } //close do loop for Fano Eq 47
 
-std::cout << "  uef= " << uef << std::endl;
+outfile << std::endl;
+outfile << " uef= " << uef << std::endl;
+outfile << std::endl;
 // formats 5F12.4/2(28x,5f12.3/) 
 outfile << "         Integ. over sig =" ; 
 for (L=1; L<6; L++) outfile << " " << tsig[L]; 
@@ -504,8 +517,12 @@ outfile << std::endl << "                            ";
 for (L=1;L<=5;L++) outfile << rM2[L] << " ";
 outfile << std::endl;
 
+outfile << std::endl;
+
 //formats (/9x,' S(0)=',f9.5,3x,'ln(I)=',f10.5,3x,S(1)=',f10.3,3x,'L(1)=',f10.3/)
 outfile << "          S(0)=" << S0 << "   ln(I)=" << avI << "   S(1)=" << S1 << "   L(1)=" << avI1 << std::endl;
+
+outfile << std::endl;
 
 outfile << "  following data without density effect" << std::endl;
 outfile << "  S(0)*blg=" << S0*blg << "   2*L(0)=" << 2*avI << std::endl;
@@ -664,6 +681,9 @@ void RESET(std::ofstream& outfile1){
 int L,J;
 float S;
  
+  std::cout << "N2 " << N2 << std::endl;
+  exit(1);
+
         if (N2 < 128) {
            N2 = N2 * 2;
            U = log(2.) / (float)N2;
@@ -696,6 +716,9 @@ float S;
 //   from 4th Line above
         for (J=1;J<=LEH;J++) {
            S     = (float)(J+MIE);
+           if (J==1){
+            std::cout << "emu " << S << " " << U << " " << Emin << std::endl;
+           }
            E[J]  = exp(S*U) * Emin;
            dE[J] = E[J]*U;
         }
@@ -708,10 +731,10 @@ float S;
 void FOLD(std::ofstream& outfile1){
 // On 18 July 1984, I have some questions whether ST 62 is correct
         
-int k,LE,LF,JH,JF,FLF,LFF;
+int k,LE,LF,JH,JF,LFF;
 int LH;
-float S;
- 
+float S,FLF;
+
         for (LH=1; LH<=1250; LH++) {
           f[LH] = h[LH];
           h[LH] = 0.;
@@ -738,26 +761,30 @@ float S;
              LFF = FLF;
              LE  = JF - MIE;
              S   = (float)(FLF - LFF);
+             //std::cout << "SSSSS " << S << std::endl;
              if (LFF == 0) LFF = 1;
              h[LH] = h[LH] + f[LF] * ((1.0-S)*f[LFF]+S*f[LFF+1]) * dE[LE];
+             //std::cout << "fan 2.5 " << LH << " " << h[LH] << " " << LF << " " << f[LF] << " " << S << " " << f[LFF+1] << " " << LE << " " << dE[LE] << std::endl;
            }
         h[LH] = h[LH] - f[LH]*f[LH] * 0.5*dE[LE];
+        //std::cout << "fan22 " << LH << " " << h[LH] << std::endl;
         }
         for (LH=1;LH<=LEH;LH++) h[LH] *= 2.0;
         if (F0 > EX) ZERO(outfile1);
         SHRINK();
         NORMAL(outfile1);
+
   return;
 }
 
 //*********************************************************************************************
 
 void OUTPUT(std::ofstream& outfile1, std::ofstream& outfile2) {               
-  
+
         float B, C, D, S1, S2, S3, S4, X;   
         float ASP[1252],ASS[1252];
-        float bax, bax1, dmp, dmp1,hhun;
-        int hmax, N, kmax, NPP, NPM, nskip, k,J,k2,J2;
+        float bax, bax1, dmp, dmp1,hhun,hmax;
+        int N, kmax, NPP, NPM, nskip, k,J,k2,J2;
         int llow, lup;
 
         time_t t = time(0);   // get time now
@@ -794,25 +821,26 @@ void OUTPUT(std::ofstream& outfile1, std::ofstream& outfile2) {
         X = 1.;
         N = MIH - MIE;
 
-      outfile2 << "******************* N1= "<<N1<<" NU,ners= "<<NU<<", "<<ners<<" ***************" << std::endl; 
+      //outfile2 << "******************* N1= "<<N1<<" NU,ners= "<<NU<<", "<<ners<<" ***************" << std::endl; 
       if (N1 > NU-ners) {
 
            outfile2 <<LEH<<", "<<N1<<", "<<N2<<", "<<N2P<<", "<<N;
            outfile2 <<", "<<H0<<", "<<thi<<", "<<xi<<", "<<rkap<<std::endl;
-           outfile2 << lemx << std::endl;
-           
-	   for (k=1;k<=lemx;k++) {
-                      outfile2 << E[k]; //  format (8f10.3) 
-                      if ((k+1)%8) outfile2 << ", ";
-                      else outfile2 << "  |" << std::endl;
-                  }
-           	 outfile2 << std::endl;
+
+           if (N2 != N2P){
+            outfile2 << lemx << std::endl;
+  	         for (k=1;k<=lemx;k++) {
+                        outfile2 << E[k]; //  format (8f10.3) 
+                        if ((k+1)%8) outfile2 << ", ";
+                        else outfile2 << std::endl;
+              }
+            }
+           	 //outfile2 << std::endl;
            if (N2 != N2P) N2P = N2;
 
         ASP[1] = 0;
         ASS[1] = 0;
-        hmax   = 0;
-
+        hmax   = 0.;
 
         for (k=1; k<=LEH; k++) {
            if (h[k]>= hmax) { 
@@ -851,7 +879,7 @@ void OUTPUT(std::ofstream& outfile1, std::ofstream& outfile2) {
 
          for (k=1;k<=LEH;k++) {
             outfile2 << h[k]; // format (1p6e12.5)
-            if ((k+1)%6) outfile2 << ", ";
+            if ((k+0)%6) outfile2 << ", ";
             else outfile2 << std::endl;
          } 
          outfile2 << std::endl;
@@ -872,7 +900,7 @@ void OUTPUT(std::ofstream& outfile1, std::ofstream& outfile2) {
             J2 = J + NPM;
             k2 = k + NPM;
             outfile1 <<"   "<<J<<"   "<<E[J]<<"   "<<h[k]<<"   "<<ASP[k]<<"   "<<ASS[k];
-            outfile1 <<"   "<<J2<<"   "<<E[J2]<<"   "<<h[k2]<<"   "<<ASP[k2]<<"   "<<ASS[k2];
+            outfile1 <<"   "<<J2<<"   "<<E[J2]<<"   "<<h[k2]<<"   "<<ASP[k2]<<"   "<<ASS[k2] << std::endl;
 //        format (3x,i5,0pF10.1,1p3E13.4,3x,i5,0pF10.1,1p3E13.4)
          }
 
@@ -892,6 +920,7 @@ float xmc,xx,S, STPP, DK, DQ, dmmpl, PB;
    outfile2.open("COV.SPE", std::ios_base::app);
 
    outfile1 << "*** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+   outfile1 << std::endl;
    outfile1 << "   CONV   t=" << exth << "   FSG=" << FSG << std::endl;
 
    xmc = exth * FSG;
@@ -952,6 +981,7 @@ float xmc,xx,S, STPP, DK, DQ, dmmpl, PB;
         xi  = saxk * thi * ZA;
         rkap = xi / Emax;
         outfile1 << std::endl << "  F 401: "<<NU<<", "<<LEH<<", "<<Emin<<", "<<D1<<", "<<DQ<<", "<<Emax<<std::endl;
+        outfile1 << std::endl;
 //   format(/2x,'F 401: ',2i5,1p5e14.7)
 
         for (N1=1; N1<=NU; N1++) {
@@ -962,8 +992,10 @@ float xmc,xx,S, STPP, DK, DQ, dmmpl, PB;
            CN   = 2. * CN;
 
     outfile1 << "* *** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+    outfile1 << std::endl;
     outfile1 << " CONVOL NUMBER= "<<N1<<" LEH= "<<LEH<<"  MIE, MIH= "<<MIE<<", "<<MIH;
     outfile1 << "    mean collision number= "<< CN << "   CZ0= "<< CZ0 << std::endl; 
+    outfile1 << std::endl;
 //    format (/,' CONVOL NUMBER=',i3,' leh=',i4,2x,'MIE,MIH=',
 //            2i5,4x, 'mean collision number=',1PE12.4,'  CZ0=',f9.6,/)
 
@@ -987,7 +1019,8 @@ float xmc,xx,S, STPP, DK, DQ, dmmpl, PB;
 
      outfile1 << " CONV, F.408 "<<N1<<" ,"<<LEH<<" ,"<<CN<<" ,"<<xi<<" ,"<<rkap<<" ,"<<PB<<std::endl;
 //    format (' CONV, F.408',2i5,f9.3,1p3e11.4/)
- 
+
+
            OUTPUT(outfile1, outfile2);
         } // end for N1=1 to NU loop
 

@@ -229,8 +229,8 @@ C
         if (n2 .eq. 64) nume = 1250
         u    = log(2.) / N2
         um   = exp(u)
-        ken  = log(1839. / 1.5) / u
-        Emin = 1839. / 2**(1.*ken/N2)
+        eken  = 1.*log(1839. / 1.5) / u
+        Emin = 1839. / 2**(eken/N2)
         E(1) = Emin
         EXS  = 1.
 C
@@ -430,6 +430,7 @@ cee FSR-143 and Uehling Eq 9
  
  6              write (3,*) ' residual dE/dx=',rst,rst*fft,' MeV/cm'
  
+        print*,rst,fft,STPW
         tdedx = stpw/1.e6 + rst*fft
         write(3,*) ' dE/dx=',tdedx,' MeV/cm ',tdedx/2.329,' MeV cm**2/g'
                  print*, ' dE/dx=',tdedx,tdedx/rho
