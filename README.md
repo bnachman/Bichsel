@@ -6,7 +6,7 @@ For all applications using the content of this program, please reference to
 the RMP paper above and COV/FOLD program with private communication to Hans
 Bichsel. The are other related information on Hans' web page:
   http://faculty.washington.edu/hbichsel/
-you may be interested in. 
+you may be interested in.  If you use the C++ and/or Allpix versions, please also cite https://arxiv.org/abs/1711.05465.
 
 Maintainer: Su Dong (last update Apr/13/2016)
 
