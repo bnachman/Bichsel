@@ -10,13 +10,15 @@ you may be interested in.
 
 Maintainer: Su Dong (last update Apr/13/2016)
 
-Translation to C++: Maurice Garcia-Sciveres
+Translation to C++: Maurice Garcia-Sciveres, Benjamin Nachman
+
+Allpix interface: Fuyue Wang
 
 =======================================================
 
 Instructions:
 
-For the Fortran code, you can do
+There are two steps to using the Bichsel model: (1) generating cross-section tables and (2) sampling from the tables.  Table generation needs to only be done once. For the Fortran code, you can do
 
 cd bichsel/FortranVersion
 sh link_cov.sh
@@ -32,3 +34,5 @@ cd bichsel/C++
 root -b
 .L bichsel-lib.C++
 mymain()
+
+N.B. The C++ version is nearly 100% validated and will soon be integrated into (2) during initialization.  Instructions for Allpix are forthcoming.
